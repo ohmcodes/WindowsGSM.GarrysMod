@@ -11,42 +11,42 @@ using System.Collections.Generic;
 
 namespace WindowsGSM.Plugins
 {
-    public class PluginTemplate : SteamCMDAgent
+    public class GarrysMod : SteamCMDAgent
     {
         // - Plugin Details
         public Plugin Plugin = new Plugin
         {
-            name = "WindowsGSM.PluginTemplate", // WindowsGSM.XXXX
+            name = "WindowsGSM.GarrysMod", // WindowsGSM.XXXX
             author = "ohmcodes",
-            description = "WindowsGSM plugin for supporting PluginTemplate Dedicated Server",
+            description = "WindowsGSM plugin for supporting Garry's Mod Dedicated Server",
             version = "1.0",
-            url = "https://github.com/ohmcodes/WindowsGSM.PluginTemplate", // Github repository link (Best practice)
+            url = "https://github.com/ohmcodes/WindowsGSM.GarrysMod", // Github repository link (Best practice)
             color = "#1E8449" // Color Hex
         };
 
         // - Standard Constructor and properties
-        public PluginTemplate(ServerConfig serverData) : base(serverData) => base.serverData = _serverData = serverData;
+        public GarrysMod(ServerConfig serverData) : base(serverData) => base.serverData = _serverData = serverData;
         private readonly ServerConfig _serverData;
         public string Error, Notice;
 
         // - Settings properties for SteamCMD installer
-        public override bool loginAnonymous => false;
-        public override string AppId => "420"; /* taken via https://steamdb.info/app/420/info/ */
+        public override bool loginAnonymous => true;
+        public override string AppId => "4020"; /* taken via https://steamdb.info/app/4020/info/ */
 
         // - Game server Fixed variables
-        public override string StartPath => "executable.exe"; // Game server start path
-        public string FullName = "PluginTemplate Dedicated Server"; // Game server FullName
+        public override string StartPath => "srcds.exe"; // Game server start path
+        public string FullName = "Garry's Mod Dedicated Server"; // Game server FullName
         public bool AllowsEmbedConsole = true;  // Does this server support output redirect?
-        public int PortIncrements = 0; // This tells WindowsGSM how many ports should skip after installation
+        public int PortIncrements = 2; // This tells WindowsGSM how many ports should skip after installation
         public object QueryMethod = new A2S(); // Query method should be use on current server type. Accepted value: null or new A2S() or new FIVEM() or new UT3()
 
         // - Game server default values
-        public string ServerName = "PluginTemplate";
-        public string Defaultmap = ""; // Original (MapName)
-        public string Maxplayers = "10"; // WGSM reads this as string but originally it is number or int (MaxPlayers)
+        public string ServerName = "Garry's Mod Dedicated Server";
+        public string Defaultmap = "gm_construct"; // Original (MapName)
+        public string Maxplayers = "24"; // WGSM reads this as string but originally it is number or int (MaxPlayers)
         public string Port = "27015"; // WGSM reads this as string but originally it is number or int
         public string QueryPort = "27016"; // WGSM reads this as string but originally it is number or int (SteamQueryPort)
-        public string Additional = string.Empty;
+        public string Additional = "-tickrate 66 -game garrysmod -maxplayers 16 +host_workshop_collection 910942406 +gamemode sandbox +map gm_flatgrass-rcon_password ChangeMe";
 
 
         private Dictionary<string, string> configData = new Dictionary<string, string>();
@@ -68,7 +68,10 @@ namespace WindowsGSM.Plugins
                 return null;
             }
 
-            string param = string.Empty;
+			var param = new StringBuilder();
+            param.Append(string.IsNullOrWhiteSpace(_serverData.ServerPort) ? string.Empty : $" -port={_serverData.ServerPort}");
+            param.Append(string.IsNullOrWhiteSpace(_serverData.ServerName) ? string.Empty : $" -name=\"{_serverData.ServerName}\"");
+            param.Append(string.IsNullOrWhiteSpace(_serverData.ServerParam) ? string.Empty : $" {_serverData.ServerParam}");
 
             // Prepare Process
             var p = new Process
@@ -78,7 +81,7 @@ namespace WindowsGSM.Plugins
                     WorkingDirectory = ServerPath.GetServersServerFiles(_serverData.ServerID),
                     FileName = shipExePath,
                     Arguments = param.ToString(),
-                    WindowStyle = ProcessWindowStyle.Hidden,
+                    WindowStyle = ProcessWindowStyle.Minimized,
                     UseShellExecute = false
 
                 },
