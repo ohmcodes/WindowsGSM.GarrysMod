@@ -46,7 +46,7 @@ namespace WindowsGSM.Plugins
         public string Maxplayers = "24"; // WGSM reads this as string but originally it is number or int (MaxPlayers)
         public string Port = "27015"; // WGSM reads this as string but originally it is number or int
         public string QueryPort = "27016"; // WGSM reads this as string but originally it is number or int (SteamQueryPort)
-        public string Additional = "-tickrate 66 -game garrysmod -maxplayers 16 +host_workshop_collection 910942406 +gamemode sandbox +map gm_flatgrass-rcon_password ChangeMe";
+        public string Additional = "-tickrate 66 -console -game garrysmod +host_workshop_collection 910942406 +gamemode sandbox +map gm_flatgrass-rcon_password ChangeMe";
 
 
         private Dictionary<string, string> configData = new Dictionary<string, string>();
@@ -72,6 +72,8 @@ namespace WindowsGSM.Plugins
             param.Append(string.IsNullOrWhiteSpace(_serverData.ServerPort) ? string.Empty : $" -port={_serverData.ServerPort}");
             param.Append(string.IsNullOrWhiteSpace(_serverData.ServerName) ? string.Empty : $" -name=\"{_serverData.ServerName}\"");
             param.Append(string.IsNullOrWhiteSpace(_serverData.ServerParam) ? string.Empty : $" {_serverData.ServerParam}");
+			param.Append(string.IsNullOrWhiteSpace(_serverData.MaxPlayers) ? string.Empty : $" +maxplayers {_serverData.MaxPlayers}");
+			param.Append(string.IsNullOrWhiteSpace(_serverData.ServerMap) ? string.Empty : $" +map {_serverData.ServerMap}");
 
             // Prepare Process
             var p = new Process
